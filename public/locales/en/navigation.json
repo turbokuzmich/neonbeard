@@ -2,5 +2,9 @@
   "main-menu-about": "about",
   "main-menu-catalog": "catalog",
   "main-menu-gifts": "gifts",
-  "main-menu-contacts": "contacts"
+  "main-menu-contacts": "contacts",
+
+  "footer-menu-about": "About",
+  "footer-menu-promo": "Promo",
+  "footer-menu-partnership": "Partnership"
 }

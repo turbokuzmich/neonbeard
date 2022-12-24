@@ -16,3 +16,18 @@ export const mainMenu = [
     link: "/contacts",
   },
 ];
+
+export const footerMenu = [
+  {
+    title: "footer-menu-about",
+    link: "/about",
+  },
+  {
+    title: "footer-menu-promo",
+    link: "/promo",
+  },
+  {
+    title: "footer-menu-partnership",
+    link: "/partnership",
+  },
+];

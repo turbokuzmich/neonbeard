@@ -2,5 +2,9 @@
   "main-menu-about": "о нас",
   "main-menu-catalog": "продукция",
   "main-menu-gifts": "подарочные карты",
-  "main-menu-contacts": "контакты"
+  "main-menu-contacts": "контакты",
+
+  "footer-menu-about": "О нас",
+  "footer-menu-promo": "Акции",
+  "footer-menu-partnership": "Сотрудничество"
 }
