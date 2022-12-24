@@ -1,10 +1,10 @@
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Layout from "../components/layout";
+import Layout from "../../components/layout";
 
-export default function Home() {
+export default function About() {
   return (
     <Layout>
-      <div>Obanze</div>
+      <div>О компании</div>
     </Layout>
   );
 }

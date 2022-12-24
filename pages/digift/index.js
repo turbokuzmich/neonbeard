@@ -1,10 +1,10 @@
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Layout from "../components/layout";
+import Layout from "../../components/layout";
 
-export default function Home() {
+export default function Gifts() {
   return (
     <Layout>
-      <div>Obanze</div>
+      <div>Подарочные сертификаты</div>
     </Layout>
   );
 }

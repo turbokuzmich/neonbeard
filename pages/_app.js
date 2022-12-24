@@ -13,6 +13,9 @@ const theme = responsiveFontSizes(
   createTheme({
     palette: {
       mode: "dark",
+      primary: {
+        main: "#a0eaff",
+      },
     },
     typography: {
       fontFamily: '"Evolventa", sans-serif',
