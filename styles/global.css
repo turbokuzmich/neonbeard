@@ -1,0 +1,16 @@
+@font-face {
+  font-family: "Evolventa";
+  src: url("/fonts/evolventa.woff2") format("woff2"),
+    url("/fonts/evolventa.woff") format("woff"),
+    url("/fonts/evolventa.ttf") format("truetype");
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  background-color: #0f0f0f;
+  background-image: url("/images/background.png");
+  background-size: cover;
+  background-attachment: fixed;
+}
