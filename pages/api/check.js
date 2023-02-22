@@ -20,7 +20,13 @@ const checkSession = setup(async function (req, res) {
 });
 
 async function updateSession(req, res) {
-  const session = await runWithSession(async function (sesion) {}, req, res);
+  const session = await runWithSession(
+    async function (session) {
+      session.obanze = "true";
+    },
+    req,
+    res
+  );
 
   res.status(200).json({
     session: session.touchedAt,
