@@ -1,18 +1,38 @@
-import withSession from "../../lib/backend/session";
-import { csrf } from "../../lib/backend/csrf";
+import runWithSession, { runIfHasSession } from "../../lib/backend/session";
+import { csrf, setup } from "../../lib/backend/csrf";
+import withCORS from "../../lib/backend/cors";
 
-export default csrf(async function (req, res) {
-  if (req.method === "HEAD") {
-    res.status(200).json({
-      method: "head",
-    });
-  } else if (req.method === "POST") {
-    res.status(200).json({
-      method: "post",
-    });
-  } else {
-    res.status(200).json({
-      method: "get",
-    });
-  }
+const checkSession = setup(async function (req, res) {
+  await runIfHasSession(
+    async function (session) {
+      res.status(200).json({
+        session: session.touchedAt,
+      });
+    },
+    async function () {
+      res.status(200).json({
+        session: false,
+      });
+    },
+    req,
+    res
+  );
 });
+
+async function updateSession(req, res) {
+  const session = await runWithSession(async function (sesion) {}, req, res);
+
+  res.status(200).json({
+    session: session.touchedAt,
+  });
+}
+
+export default withCORS(
+  csrf(async function (req, res) {
+    if (req.method === "POST") {
+      return updateSession(req, res);
+    } else if (req.method === "GET") {
+      return checkSession(req, res);
+    }
+  })
+);
