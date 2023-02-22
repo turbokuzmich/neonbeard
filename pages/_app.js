@@ -1,5 +1,4 @@
 import CssBaseline from "@mui/material/CssBaseline";
-import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
 import {
   createTheme,
@@ -25,12 +24,10 @@ const theme = responsiveFontSizes(
 
 function NeonBeardApp({ Component, pageProps }) {
   return (
-    <SessionProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </SessionProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </ThemeProvider>
   );
 }
 
