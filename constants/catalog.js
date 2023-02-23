@@ -40,3 +40,10 @@ export const categories = [
     title: "category-beauty-salons",
   },
 ];
+
+export const tempItems = {
+  116: {
+    id: "super_cleansing_gel_red_neon",
+    variant: 100,
+  },
+};
