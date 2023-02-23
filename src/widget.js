@@ -24,14 +24,14 @@ const api = (function () {
     }, 30000);
 
     return function (handler) {
-      return async function () {
+      return async function (...args) {
         const waitCheck = check();
 
         if (waitCheck) {
           await waitCheck;
         }
 
-        return handler();
+        return handler(...args);
       };
     };
   })();
@@ -43,7 +43,14 @@ const api = (function () {
       .catch(() => []);
   });
 
-  return { getCart };
+  const changeItem = withCSRFCheck(async (item) => {
+    return api
+      .post("/cart", item)
+      .then(response, get(response, ["data", "items"], []))
+      .catch(() => []);
+  });
+
+  return { getCart, changeItem };
 })();
 
 function setupButton(store) {
