@@ -24,7 +24,7 @@ export function* changeItem({ payload }) {
 
     const items = yield call(change, payload);
 
-    yield put(cartSlice.actions.changeItemComplete({ id, items }));
+    yield put(cart.actions.changeItemComplete({ id, items }));
   } catch (error) {
     console.log(error);
   }

@@ -1,4 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createSelector } from "@reduxjs/toolkit";
+import get from "lodash/get";
+import property from "lodash/property";
 
 export const CartState = {
   initial: "initial",
@@ -8,6 +10,18 @@ export const CartState = {
   payment: "payment",
   success: "success",
 };
+
+export const getCart = property("cart");
+
+export const getCartState = createSelector(getCart, property("state"));
+
+export const getCartItems = createSelector(getCart, (cart) =>
+  get(cart, "items", [])
+);
+
+export const getCartItemsCount = createSelector(getCartItems, (items) =>
+  items.map(property("qty")).reduce((count, qty) => count + qty, 0)
+);
 
 export default createSlice({
   name: "cart",
