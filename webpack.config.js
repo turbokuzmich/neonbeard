@@ -13,4 +13,20 @@ module.exports = {
     filename: "widget.js",
     path: resolve(cwd, dist),
   },
+  module: {
+    rules: [
+      {
+        test: /src\/widget/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+        options: {
+          presets: ["@babel/preset-react"],
+        },
+      },
+    ],
+  },
+  optimization: {
+    minimize: true,
+  },
+  devtool: false,
 };

@@ -1,6 +1,8 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 import get from "lodash/get";
 import property from "lodash/property";
+import { getUniversal } from "./catalog";
+import { getUniversalId } from "../../lib/helpers/catalog";
 
 export const CartState = {
   initial: "initial",
@@ -12,8 +14,12 @@ export const CartState = {
 };
 
 export const getCart = property("cart");
-
 export const getCartState = createSelector(getCart, property("state"));
+
+export const getNotification = createSelector(
+  getCart,
+  property("notification")
+);
 
 export const getCartItems = createSelector(getCart, (cart) =>
   get(cart, "items", [])
@@ -23,12 +29,30 @@ export const getCartItemsCount = createSelector(getCartItems, (items) =>
   items.map(property("qty")).reduce((count, qty) => count + qty, 0)
 );
 
+export const getCartSubtotal = createSelector(
+  getCartItems,
+  getUniversal,
+  (items, universal) =>
+    items.reduce(
+      (total, { itemId, variantId, qty }) =>
+        total +
+        get(
+          universal,
+          [getUniversalId({ id: itemId, variant: variantId }), "price"],
+          0
+        ) *
+          qty,
+      0
+    )
+);
+
 export default createSlice({
   name: "cart",
   initialState: {
     state: CartState.initial,
     items: [],
     changing: {},
+    notification: false,
   },
   reducers: {
     fetch(state) {
@@ -54,6 +78,12 @@ export default createSlice({
     changeItemComplete(state, { payload: { id, items } }) {
       state.changing[id] = false;
       state.items = items;
+    },
+    showNotification(state) {
+      state.notification = true;
+    },
+    hideNotification(state) {
+      state.notification = false;
     },
   },
 });
