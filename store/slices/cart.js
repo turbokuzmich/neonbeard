@@ -1,4 +1,4 @@
-import { createSlice, createSelector } from "@reduxjs/toolkit";
+import { createSlice, createSelector, createAction } from "@reduxjs/toolkit";
 import get from "lodash/get";
 import property from "lodash/property";
 import { getUniversal } from "./catalog";
@@ -46,6 +46,9 @@ export const getCartSubtotal = createSelector(
     )
 );
 
+export const startTimer = createAction("cart/startTimer");
+export const stopTimer = createAction("cart/stopTimer");
+
 export default createSlice({
   name: "cart",
   initialState: {
@@ -63,7 +66,9 @@ export default createSlice({
       state.state = CartState.fetched;
     },
     changeItem(state, { payload: { id, variant, qty = 1, append = false } }) {
-      state.changing[id] = true;
+      const uid = getUniversalId({ id, variant });
+
+      state.changing[uid] = true;
 
       const index = state.items.findIndex(
         ({ itemId, variantId }) => itemId === id && variantId === variant
@@ -75,14 +80,18 @@ export default createSlice({
         state.items.push({ itemId: id, variantId: variant, qty });
       }
     },
-    changeItemComplete(state, { payload: { id, items } }) {
-      state.changing[id] = false;
+    changeItemComplete(state, { payload: { id, variant, items } }) {
+      const uid = getUniversalId({ id, variant });
+
+      state.changing[uid] = false;
       state.items = items;
     },
     showNotification(state) {
+      state.timer = true;
       state.notification = true;
     },
     hideNotification(state) {
+      state.timer = false;
       state.notification = false;
     },
   },

@@ -1,4 +1,4 @@
-import cart from "../slices/cart";
+import cart, { startTimer, stopTimer } from "../slices/cart";
 import catalog from "../slices/catalog";
 import axios from "axios";
 import { parse } from "../../lib/helpers/catalog";
@@ -6,11 +6,14 @@ import { parse } from "../../lib/helpers/catalog";
 import {
   all,
   call,
-  fork,
   put,
+  race,
+  take,
   delay,
   takeLatest,
   getContext,
+  cancel,
+  spawn,
 } from "redux-saga/effects";
 
 export function* fetchCatalog() {
@@ -46,14 +49,14 @@ export function* fetchCartItems() {
 }
 
 export function* changeItem({ payload }) {
-  const { id } = payload;
+  const { id, variant } = payload;
 
   try {
     const { changeItem: change } = yield getContext("api");
 
     const items = yield call(change, payload);
 
-    yield put(cart.actions.changeItemComplete({ id, items }));
+    yield put(cart.actions.changeItemComplete({ id, variant, items }));
     yield put(cart.actions.showNotification());
   } catch (error) {
     // FIXME show error
@@ -61,17 +64,34 @@ export function* changeItem({ payload }) {
   }
 }
 
-export function* autoHideNotification() {
+export function* hideNotification() {
   yield delay(6000);
   yield put(cart.actions.hideNotification());
 }
 
-export default function* root() {
-  yield all([
-    takeLatest(cart.actions.changeItem, changeItem),
-    takeLatest(cart.actions.showNotification, autoHideNotification),
-  ]);
+export function* watchNotification() {
+  let timer = null;
 
-  yield fork(fetchCatalog);
-  yield fork(fetchCartItems);
+  while (true) {
+    const { show, hide, start, stop } = yield race({
+      stop: take(stopTimer),
+      start: take(startTimer),
+      show: take(cart.actions.showNotification),
+      hide: take(cart.actions.hideNotification),
+    });
+
+    if (show || start) {
+      timer = yield spawn(hideNotification);
+    } else if (hide || stop) {
+      yield cancel(timer);
+    }
+  }
+}
+
+export default function* root() {
+  yield all([takeLatest(cart.actions.changeItem, changeItem)]);
+
+  yield spawn(fetchCatalog);
+  yield spawn(fetchCartItems);
+  yield spawn(watchNotification);
 }

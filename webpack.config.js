@@ -16,7 +16,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /src\/widget/,
+        test: /(src\/widget|components)/,
         exclude: /node_modules/,
         loader: "babel-loader",
         options: {

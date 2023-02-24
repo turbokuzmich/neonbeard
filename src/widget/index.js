@@ -1,18 +1,25 @@
 import Cookies from "js-cookie";
 import api from "./api";
 import makeStore from "../../store";
-import setupButton from "./button";
-import setupHeader from "./header";
 
-function main() {
-  const store = makeStore(api);
+const store = makeStore(api);
 
-  if (Cookies.get("payment")) {
-    setupButton(store);
-    setupHeader(store);
+if (Cookies.get("payment")) {
+  if (document.querySelector(".header-cart-wrap")) {
+    import("./header").then(function ({ default: setupHeader }) {
+      setupHeader(store);
+    });
   }
-
-  window.store = store;
+  if (document.querySelector(".product-action")) {
+    import("./button").then(function ({ default: setupButton }) {
+      setupButton(store);
+    });
+  }
+  if (document.getElementById("cart-root")) {
+    import("./cart").then(function ({ default: setupCart }) {
+      setupCart(store);
+    });
+  }
 }
 
-window.addEventListener("load", main);
+window.store = store;
