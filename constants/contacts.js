@@ -1,3 +1,5 @@
+export const phoneFormat = "+7 ### ###-##-##";
+
 export const phones = [
   {
     value: 74956659015,

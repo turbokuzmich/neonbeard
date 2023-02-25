@@ -25,6 +25,8 @@
     "cron": "^2.2.0",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
+    "formik": "^2.2.9",
+    "formik-mui": "^5.0.0-alpha.0",
     "html-minifier-terser": "^7.1.0",
     "i18next": "^22.4.6",
     "immer": "^9.0.19",
@@ -53,7 +55,8 @@
     "redux-saga": "^1.2.2",
     "sequelize": "^6.26.0",
     "sqlite3": "^5.1.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "yup": "^1.0.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.18.6",

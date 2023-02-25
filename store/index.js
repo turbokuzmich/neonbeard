@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { isServer } from "../lib/helpers/features";
 import cart from "./slices/cart";
 import catalog from "./slices/catalog";
+import delivery from "./slices/delivery";
 import saga from "./sagas";
 import createSagaMiddleware from "@redux-saga/core";
 
@@ -10,6 +11,7 @@ export default function (api) {
     reducer: {
       [cart.name]: cart.reducer,
       [catalog.name]: catalog.reducer,
+      [delivery.name]: delivery.reducer,
     },
   };
 

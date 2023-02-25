@@ -94,5 +94,14 @@ export default createSlice({
       state.timer = false;
       state.notification = false;
     },
+    toItems(state) {
+      state.state = "fetched";
+    },
+    toDelivery(state) {
+      state.state = "delivery";
+    },
+    toPayment(state) {
+      state.state = "payment";
+    },
   },
 });
