@@ -1,8 +1,9 @@
 import { Op } from "sequelize";
 import sequelize, { City } from "../../../lib/backend/deluxspa";
 import get from "lodash/get";
+import cors from "../../../lib/backend/cors";
 
-export default async function cities(req, res) {
+export default cors(async function (req, res) {
   await sequelize;
 
   const title = get(req, "query.title", "").trim();
@@ -18,4 +19,4 @@ export default async function cities(req, res) {
   });
 
   return res.status(200).json(suggestions);
-}
+});
