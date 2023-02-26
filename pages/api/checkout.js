@@ -70,7 +70,7 @@ async function doCheckout(req, res) {
 
     await orderTransaction.commit();
 
-    // const url = await createPayment(order);
+    const url = await createPayment(order);
 
     // await Promise.all([sendNewOrderEmail(order), notifyOfNewOrder(order)]);
 

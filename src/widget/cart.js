@@ -510,6 +510,7 @@ function Cart() {
                       onInputChange={onCdekCityTitleInputChange}
                       onChange={onCdekCitySelected}
                       options={cdekCitySuggestions}
+                      noOptionsText="Выберите город"
                       isOptionEqualToValue={isOptionEqualToValue}
                       renderOption={(props, option) => (
                         <li {...props} key={option.value}>

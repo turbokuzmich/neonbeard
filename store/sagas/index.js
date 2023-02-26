@@ -9,6 +9,7 @@ import {
   race,
   take,
   delay,
+  select,
   debounce,
   takeLatest,
   getContext,
@@ -155,12 +156,10 @@ export function* handlePayment() {
     const { checkout } = yield getContext("api");
 
     const url = yield call(checkout, info);
-    // const {
-    //   data: { url },
-    // } = yield call([api, api.post], "/checkout", info);
 
-    // location.href = url;
+    location.href = url;
   } catch (_) {
+    console.log(_);
     // FIXME log error
   }
 }
