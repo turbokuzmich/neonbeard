@@ -28,6 +28,13 @@ const withCSRFCheck = (function () {
   };
 })();
 
+const getCatalog = withCSRFCheck(async () => {
+  return api
+    .get("/catalog")
+    .then((response) => get(response, ["data"], []))
+    .catch(() => []);
+});
+
 const getCart = withCSRFCheck(async () => {
   return api
     .get("/cart")
@@ -65,6 +72,7 @@ const calculateCdekTariff = withCSRFCheck(async (code, address) => {
 
 export default {
   getCart,
+  getCatalog,
   changeItem,
   getCdekCities,
   getCdekPoints,

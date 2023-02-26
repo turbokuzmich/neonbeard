@@ -1,8 +1,6 @@
 import cart, { startTimer, stopTimer } from "../slices/cart";
 import catalog from "../slices/catalog";
 import delivery from "../slices/delivery";
-import axios from "axios";
-import { parse } from "../../lib/helpers/catalog";
 
 import {
   all,
@@ -22,14 +20,11 @@ export function* fetchCatalog() {
   try {
     yield put(catalog.actions.fetch());
 
-    const { data } = yield call(
-      [axios, axios.get],
-      "https://neon-beard.ru/widget.html"
-    );
+    const { getCatalog } = yield getContext("api");
 
-    yield put(
-      catalog.actions.fetchComplete(parse("https://neon-beard.ru", data))
-    );
+    const items = yield call(getCatalog);
+
+    yield put(catalog.actions.fetchComplete(items));
   } catch (error) {
     // FIXME show error
   }
