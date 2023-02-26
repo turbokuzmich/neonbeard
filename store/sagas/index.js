@@ -1,5 +1,6 @@
 import cart, { startTimer, stopTimer } from "../slices/cart";
 import catalog from "../slices/catalog";
+import delivery from "../slices/delivery";
 import axios from "axios";
 import { parse } from "../../lib/helpers/catalog";
 
@@ -10,6 +11,7 @@ import {
   race,
   take,
   delay,
+  debounce,
   takeLatest,
   getContext,
   cancel,
@@ -88,8 +90,57 @@ export function* watchNotification() {
   }
 }
 
+export function* fetchCdekCitiesSuggestions({ payload: title }) {
+  if (title.length === 0) {
+    return yield put(delivery.actions.setCdekCitySuggestions([]));
+  }
+
+  try {
+    const { getCdekCities } = yield getContext("api");
+
+    const suggestions = yield getCdekCities(title);
+
+    yield put(
+      delivery.actions.setCdekCitySuggestions(
+        suggestions.map((city) => ({
+          ...city,
+          label: `${city.city}, ${city.region}`,
+          value: city.code,
+        }))
+      )
+    );
+  } catch (_) {
+    // FIXME log error
+  }
+}
+
+export function* fetchCdekPointsSuggestions({ payload: city }) {
+  if (city === null) {
+    return;
+  }
+
+  try {
+    const { getCdekPoints } = yield getContext("api");
+
+    const points = yield getCdekPoints(city.code);
+
+    yield put(delivery.actions.setPoints(points));
+  } catch (_) {
+    // FIXME log error
+  }
+}
+
 export default function* root() {
-  yield all([takeLatest(cart.actions.changeItem, changeItem)]);
+  yield all([
+    takeLatest(cart.actions.changeItem, changeItem),
+    debounce(
+      300,
+      delivery.actions.changeCdekCityTitleInput,
+      fetchCdekCitiesSuggestions
+    ),
+    takeLatest(delivery.actions.setCdekCity, fetchCdekPointsSuggestions),
+    takeLatest(delivery.actions.setPoint, calculateCdekTariff),
+  ]);
 
   yield spawn(fetchCatalog);
   yield spawn(fetchCartItems);

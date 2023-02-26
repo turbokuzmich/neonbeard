@@ -120,7 +120,7 @@ function Cart() {
 
   const onCdekCitySelected = useCallback(
     (_, option) =>
-      dispatch(deliverySlice.actions.setCdekCity(option ? option : null)),
+      dispatch(delivery.actions.setCdekCity(option ? option : null)),
     [dispatch]
   );
 

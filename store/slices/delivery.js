@@ -148,5 +148,16 @@ export default createSlice({
       state.cdekPoint = null;
       state.cdekCalculation = null;
     },
+    setCdekCitySuggestions(state, { payload }) {
+      state.cdekCitySuggestions = payload;
+      state.cdekPoints = [];
+      state.cdekPoint = null;
+      state.cdekCalculation = null;
+    },
+    setCdekPoints(state, { payload }) {
+      state.cdekPoints = payload;
+      state.cdekPoint = null;
+      state.cdekCalculation = null;
+    },
   },
 });

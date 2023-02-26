@@ -42,4 +42,18 @@ const changeItem = withCSRFCheck(async (item) => {
     .catch(() => []);
 });
 
-export default { getCart, changeItem };
+const getCdekCities = withCSRFCheck(async (title) => {
+  return api
+    .get("/cdek/cities", { params: { title } })
+    .then((response) => get(response, ["data"], []))
+    .catch(() => []);
+});
+
+const getCdekPoints = withCSRFCheck(async (city) => {
+  return api
+    .get("/cdek/points", { params: { city } })
+    .then((response) => get(response, ["data"], []))
+    .catch(() => []);
+});
+
+export default { getCart, changeItem, getCdekCities, getCdekPoints };
