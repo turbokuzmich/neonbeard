@@ -1,6 +1,6 @@
 import cors from "../../lib/backend/cors";
 import get from "lodash/get";
-import property from "lodas/property";
+import property from "lodash/property";
 import { Order } from "../../lib/backend/sequelize";
 
 export default cors(async function (req, res) {
