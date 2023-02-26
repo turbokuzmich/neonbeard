@@ -13,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import NumericStepper from "../../components/numeric-stepper";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Formik, Form, Field, useField, useFormikContext } from "formik";
 import { TextField as TextInput } from "formik-mui";
 import { PatternFormat } from "react-number-format";
@@ -40,17 +42,24 @@ import cart, {
 
 import delivery, {
   getCdekCity,
+  getDeliveryType,
   getCdekCitySuggestions,
   getDeliveryFormValues,
+  getCdekPoints,
+  getCdekPoint,
+  getCdekCalculation,
 } from "../../store/slices/delivery";
+import { DeliveryType } from "../../constants/delivery";
 
 function Cart() {
   const dispatch = useDispatch();
 
   const map = useRef();
+  const clusterer = useRef();
   const phoneFieldRef = useRef();
   const mapsContainerRef = useRef();
 
+  const type = useSelector(getDeliveryType);
   const items = useSelector(getCartItems);
   const universal = useSelector(getUniversal);
   const cartState = useSelector(getCartState);
@@ -60,6 +69,9 @@ function Cart() {
   const formValues = useSelector(getDeliveryFormValues);
   const cdekCity = useSelector(getCdekCity);
   const cdekCitySuggestions = useSelector(getCdekCitySuggestions);
+  const cdekPoint = useSelector(getCdekPoint);
+  const cdekPoints = useSelector(getCdekPoints);
+  const cdekCalculation = useSelector(getCdekCalculation);
 
   const onChanges = useMemo(
     () =>
@@ -97,6 +109,15 @@ function Cart() {
     [items, dispatch]
   );
 
+  const setType = useCallback(
+    (_, type) => {
+      if (type) {
+        dispatch(delivery.actions.setType(type));
+      }
+    },
+    [dispatch]
+  );
+
   const toItems = useCallback(
     () => dispatch(cart.actions.toItems()),
     [dispatch]
@@ -124,21 +145,100 @@ function Cart() {
     [dispatch]
   );
 
-  const isOptionEqualToValue = useCallback((cityA, cityB) => {
-    return cityA.code === cityB.code;
-  }, []);
+  const isOptionEqualToValue = useCallback(
+    (cityA, cityB) => cityA.code === cityB.code,
+    []
+  );
 
-  useEffect(() => {
-    ymaps.ready(() => {
-      dispatch(delivery.actions.apiLoaded());
-    });
-  }, [dispatch]);
+  const onCdekPointSelected = useCallback(
+    (point) => dispatch(delivery.actions.setCdekPoint(point)),
+    [dispatch]
+  );
+
+  useEffect(
+    () =>
+      ymaps.ready(() => {
+        dispatch(delivery.actions.apiLoaded());
+      }),
+    [dispatch]
+  );
 
   useEffect(() => {
     if (cartState === CartState.delivery && phoneFieldRef.current) {
       phoneFieldRef.current.focus();
     }
   }, [cartState]);
+
+  useEffect(() => {
+    if (
+      cartState === CartState.delivery &&
+      type === DeliveryType.cdek &&
+      cdekCity
+    ) {
+      if (map.current) {
+        map.current.destroy();
+        map.current = null;
+      }
+
+      const { latitude, longitude } = cdekCity;
+
+      map.current = new ymaps.Map(mapsContainerRef.current, {
+        center: [latitude, longitude],
+        zoom: 11,
+        controls: ["smallMapDefaultSet"],
+      });
+    } else {
+      if (map.current) {
+        map.current.destroy();
+        map.current = null;
+      }
+    }
+  }, [cdekCity, type, cartState]);
+
+  useEffect(() => {
+    if (map.current) {
+      if (clusterer.current) {
+        clusterer.current.removeAll();
+        map.current.geoObjects.remove(clusterer.current);
+        clusterer.current = null;
+      }
+
+      clusterer.current = new ymaps.Clusterer({
+        groupByCoordinates: false,
+        clusterDisableClickZoom: true,
+        clusterHideIconOnBalloonOpen: false,
+        geoObjectHideIconOnBalloonOpen: false,
+      });
+
+      clusterer.current.balloon.events.add(["open", "click"], () => {
+        const { cluster } = clusterer.current.balloon.getData();
+        const object = cluster.state.get("activeObject");
+        object.events.fire("deluxspa:selected");
+      });
+
+      const placemarks = cdekPoints.map((point) => {
+        const placemark = new ymaps.Placemark(
+          [point.location.latitude, point.location.longitude],
+          {
+            balloonContentHeader: point.name,
+            balloonContentBody: point.location.address_full,
+          },
+          {
+            preset: "islands#circleIcon",
+          }
+        );
+
+        placemark.events.add(["click", "deluxspa:selected"], () =>
+          onCdekPointSelected(point)
+        );
+
+        return placemark;
+      });
+
+      clusterer.current.add(placemarks);
+      map.current.geoObjects.add(clusterer.current);
+    }
+  }, [cdekPoints, onCdekPointSelected]);
 
   if (
     [CatalogState.initial, CatalogState.fetching].includes(catalogState) ||
@@ -321,6 +421,19 @@ function Cart() {
                 <Typography variant="h4" sx={{ flexGrow: 1 }}>
                   Доставка
                 </Typography>
+                {cdekPoint && cdekCalculation ? (
+                  <Typography variant="h6">
+                    В пункт «{cdekPoint.name}» на сумму{" "}
+                    <Price sum={cdekCalculation.total_sum} /> (
+                    {cdekCalculation.period_min} – {cdekCalculation.period_max}{" "}
+                    {decline(cdekCalculation.period_max, [
+                      "день",
+                      "дня",
+                      "дней",
+                    ])}
+                    )
+                  </Typography>
+                ) : null}
               </Box>
               <Box
                 sx={{
@@ -339,45 +452,73 @@ function Cart() {
                 />
               </Box>
               <Box sx={{ mb: 2 }}>
-                <Autocomplete
-                  disablePortal
-                  autoComplete
-                  value={cdekCity}
-                  filterOptions={identity}
-                  onInputChange={onCdekCityTitleInputChange}
-                  onChange={onCdekCitySelected}
-                  options={cdekCitySuggestions}
-                  isOptionEqualToValue={isOptionEqualToValue}
-                  renderOption={(props, option) => (
-                    <li {...props} key={option.value}>
-                      {option.label}
-                    </li>
-                  )}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Город" fullWidth />
-                  )}
-                  sx={{ mb: 1 }}
-                />
-                {cdekCity ? (
+                <ToggleButtonGroup value={type} onChange={setType} exclusive>
+                  <ToggleButton value={DeliveryType.cdek}>
+                    Пункт выдачи СДЭК
+                  </ToggleButton>
+                  <ToggleButton value={DeliveryType.courier}>
+                    Курьером мо Москве
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+              <Box sx={{ mb: 2 }}>
+                {type === DeliveryType.cdek ? (
                   <>
-                    <Box
-                      ref={mapsContainerRef}
-                      sx={{
-                        height: { xs: 200, md: 400 },
-                      }}
-                    ></Box>
+                    <Autocomplete
+                      disablePortal
+                      autoComplete
+                      value={cdekCity}
+                      filterOptions={identity}
+                      onInputChange={onCdekCityTitleInputChange}
+                      onChange={onCdekCitySelected}
+                      options={cdekCitySuggestions}
+                      isOptionEqualToValue={isOptionEqualToValue}
+                      renderOption={(props, option) => (
+                        <li {...props} key={option.value}>
+                          {option.label}
+                        </li>
+                      )}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Город" fullWidth />
+                      )}
+                      sx={{ mb: 1 }}
+                    />
+                    {cdekCity ? (
+                      <>
+                        <Box
+                          ref={mapsContainerRef}
+                          sx={{
+                            height: { xs: 200, md: 400 },
+                          }}
+                        ></Box>
+                      </>
+                    ) : null}
                   </>
                 ) : null}
+                {type === DeliveryType.courier ? (
+                  <Field
+                    component={TextInput}
+                    label="Адрес доставки"
+                    autoComplete="off"
+                    name="courierAddress"
+                    rows={2}
+                    multiline
+                    fullWidth
+                  />
+                ) : null}
               </Box>
-              <Field
-                component={TextInput}
-                label="Комментарий"
-                autoComplete="off"
-                name="comment"
-                rows={4}
-                multiline
-                fullWidth
-              />
+              <Box sx={{ mb: 2 }}>
+                <Field
+                  component={TextInput}
+                  label="Комментарий"
+                  autoComplete="off"
+                  name="comment"
+                  rows={4}
+                  multiline
+                  fullWidth
+                />
+              </Box>
+              <ToPaymentButton />
             </Form>
           </Formik>
         ) : null}
@@ -387,19 +528,16 @@ function Cart() {
 }
 
 function ToPaymentButton() {
-  const { t } = useTranslation();
   const { isValid, submitForm } = useFormikContext();
-  const point = useSelector(getDeliveryPoint);
-  const calculation = useSelector(getDeliveryCalculation);
 
   return (
     <Button
       size="large"
       variant="contained"
-      disabled={!(isValid && point && calculation)}
+      disabled={!isValid}
       onClick={submitForm}
     >
-      {t("cart-page-button-complete-order")}
+      Оплатить
     </Button>
   );
 }

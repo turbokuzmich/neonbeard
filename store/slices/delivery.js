@@ -19,7 +19,6 @@ export const getDeliveryComment = createSelector(
   getDelivery,
   property("comment")
 );
-
 export const getCourierAddress = createSelector(
   getDelivery,
   property("courierAddress")
@@ -33,29 +32,32 @@ export const getCourierLng = createSelector(
   property("courierLng")
 );
 export const getCdekCity = createSelector(getDelivery, property("cdekCity"));
+export const getCdekPoints = createSelector(
+  getDelivery,
+  property("cdekPoints")
+);
 export const getCdekCitySuggestions = createSelector(
   getDelivery,
   property("cdekCitySuggestions")
 );
-export const getCdekPointTitle = createSelector(
+export const getCdekPoint = createSelector(getDelivery, property("cdekPoint"));
+export const getCdekCalculation = createSelector(
   getDelivery,
-  property("cdekPointTitle")
+  property("cdekCalculation")
 );
-export const getCdekPointCode = createSelector(
-  getDelivery,
-  property("cdekPointCode")
-);
+export const getCdekPointTitle = createSelector(getCdekPoint, property("name"));
+export const getCdekPointCode = createSelector(getCdekPoint, property("code"));
 export const getCdekPointAddress = createSelector(
-  getDelivery,
-  property("cdekPointAddress")
+  getCdekPoint,
+  property(["location", "address_full"])
 );
 export const getCdekPointLat = createSelector(
-  getDelivery,
-  property("cdekPointLat")
+  getCdekPoint,
+  property(["location", "latitude"])
 );
 export const getCdekPointLng = createSelector(
-  getDelivery,
-  property("cdekPointLng")
+  getCdekPoint,
+  property(["location", "longitude"])
 );
 
 export const getDeliveryFormValues = createSelector(
@@ -135,6 +137,9 @@ export default createSlice({
     apiLoaded(state) {
       state.isAPILoaded = true;
     },
+    setType(state, { payload }) {
+      state.type = payload;
+    },
     changeCdekCityTitleInput(state, { payload }) {
       state.cdekCity = null;
       state.cdekPoints = [];
@@ -150,14 +155,18 @@ export default createSlice({
     },
     setCdekCitySuggestions(state, { payload }) {
       state.cdekCitySuggestions = payload;
-      state.cdekPoints = [];
-      state.cdekPoint = null;
-      state.cdekCalculation = null;
     },
     setCdekPoints(state, { payload }) {
       state.cdekPoints = payload;
       state.cdekPoint = null;
       state.cdekCalculation = null;
+    },
+    setCdekPoint(state, { payload }) {
+      state.cdekPoint = payload;
+      state.cdekCalculation = null;
+    },
+    setCdekCalculation(state, { payload }) {
+      state.cdekCalculation = payload;
     },
   },
 });

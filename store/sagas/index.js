@@ -124,7 +124,30 @@ export function* fetchCdekPointsSuggestions({ payload: city }) {
 
     const points = yield getCdekPoints(city.code);
 
-    yield put(delivery.actions.setPoints(points));
+    yield put(delivery.actions.setCdekPoints(points));
+  } catch (_) {
+    // FIXME log error
+  }
+}
+
+export function* calculateCdekTariff({ payload: point }) {
+  if (point === null) {
+    return;
+  }
+
+  try {
+    const { calculateCdekTariff } = yield getContext("api");
+    const {
+      location: { city_code, address_full },
+    } = point;
+
+    const calculation = yield call(
+      calculateCdekTariff,
+      city_code,
+      address_full
+    );
+
+    yield put(delivery.actions.setCdekCalculation(calculation));
   } catch (_) {
     // FIXME log error
   }
@@ -139,7 +162,7 @@ export default function* root() {
       fetchCdekCitiesSuggestions
     ),
     takeLatest(delivery.actions.setCdekCity, fetchCdekPointsSuggestions),
-    takeLatest(delivery.actions.setPoint, calculateCdekTariff),
+    takeLatest(delivery.actions.setCdekPoint, calculateCdekTariff),
   ]);
 
   yield spawn(fetchCatalog);

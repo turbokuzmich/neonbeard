@@ -56,4 +56,17 @@ const getCdekPoints = withCSRFCheck(async (city) => {
     .catch(() => []);
 });
 
-export default { getCart, changeItem, getCdekCities, getCdekPoints };
+const calculateCdekTariff = withCSRFCheck(async (code, address) => {
+  return api
+    .get("/cdek/calculate", { params: { code, address } })
+    .then((response) => get(response, ["data"], []))
+    .catch(() => []);
+});
+
+export default {
+  getCart,
+  changeItem,
+  getCdekCities,
+  getCdekPoints,
+  calculateCdekTariff,
+};
