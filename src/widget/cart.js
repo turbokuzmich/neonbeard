@@ -133,6 +133,26 @@ function Cart() {
     [dispatch]
   );
 
+  const onPhoneChange = useCallback(
+    (phone) => dispatch(delivery.actions.setPhone(phone)),
+    [dispatch]
+  );
+
+  const onEmailChange = useCallback(
+    (event) => dispatch(delivery.actions.setEmail(event.target.value)),
+    [dispatch]
+  );
+
+  const onCommentChange = useCallback(
+    (event) => dispatch(delivery.actions.setComment(event.target.value)),
+    [dispatch]
+  );
+
+  const onCourierAddressChange = useCallback(
+    (event) => dispatch(delivery.actions.setCourierAddress(event.target.value)),
+    [dispatch]
+  );
+
   const onCdekCityTitleInputChange = useCallback(
     (_, newInput) =>
       dispatch(delivery.actions.changeCdekCityTitleInput(newInput)),
@@ -155,13 +175,11 @@ function Cart() {
     [dispatch]
   );
 
-  useEffect(
-    () =>
-      ymaps.ready(() => {
-        dispatch(delivery.actions.apiLoaded());
-      }),
-    [dispatch]
-  );
+  useEffect(() => {
+    ymaps.ready(() => {
+      dispatch(delivery.actions.apiLoaded());
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     if (cartState === CartState.delivery && phoneFieldRef.current) {
@@ -403,8 +421,8 @@ function Cart() {
         )}
         {cartState === CartState.delivery ? (
           <Formik
-            initialValues={formValues}
             onSubmit={toPayment}
+            initialValues={formValues}
             validationSchema={checkoutValidationSchema}
             enableReinitialize
             validateOnMount
@@ -425,12 +443,27 @@ function Cart() {
                   <Typography variant="h6">
                     В пункт «{cdekPoint.name}» на сумму{" "}
                     <Price sum={cdekCalculation.total_sum} /> (
-                    {cdekCalculation.period_min} – {cdekCalculation.period_max}{" "}
-                    {decline(cdekCalculation.period_max, [
-                      "день",
-                      "дня",
-                      "дней",
-                    ])}
+                    {cdekCalculation.period_min ===
+                    cdekCalculation.period_max ? (
+                      <>
+                        {cdekCalculation.period_max}{" "}
+                        {decline(cdekCalculation.period_max, [
+                          "день",
+                          "дня",
+                          "дней",
+                        ])}
+                      </>
+                    ) : (
+                      <>
+                        {cdekCalculation.period_min} –{" "}
+                        {cdekCalculation.period_max}{" "}
+                        {decline(cdekCalculation.period_max, [
+                          "день",
+                          "дня",
+                          "дней",
+                        ])}
+                      </>
+                    )}
                     )
                   </Typography>
                 ) : null}
@@ -442,9 +475,10 @@ function Cart() {
                   mb: 2,
                 }}
               >
-                <PhoneInput inputRef={phoneFieldRef} />
+                <PhoneInput inputRef={phoneFieldRef} onChange={onPhoneChange} />
                 <Field
                   component={TextInput}
+                  onChange={onEmailChange}
                   label="Адрес электронной почты"
                   autoComplete="off"
                   name="email"
@@ -497,6 +531,7 @@ function Cart() {
                 ) : null}
                 {type === DeliveryType.courier ? (
                   <Field
+                    onChange={onCourierAddressChange}
                     component={TextInput}
                     label="Адрес доставки"
                     autoComplete="off"
@@ -509,6 +544,7 @@ function Cart() {
               </Box>
               <Box sx={{ mb: 2 }}>
                 <Field
+                  onChange={onCommentChange}
                   component={TextInput}
                   label="Комментарий"
                   autoComplete="off"
@@ -560,10 +596,16 @@ function PhoneInputBase({ inputRef, ...props }) {
   );
 }
 
-function PhoneInput({ inputRef }) {
+function PhoneInput({ inputRef, onChange }) {
   const [{ value, onBlur }, _, { setValue }] = useField("phone");
 
-  const onValueChange = useCallback(({ value }) => setValue(value), [setValue]);
+  const onValueChange = useCallback(
+    ({ value }) => {
+      setValue(value);
+      onChange(value);
+    },
+    [setValue, onChange]
+  );
 
   const renderInput = useCallback(
     (props) => <PhoneInputBase inputRef={inputRef} {...props} />,

@@ -119,7 +119,7 @@ export default createSlice({
 
     geocodingStatus: GeoCodingStatus.initial,
 
-    courierAddress: null,
+    courierAddress: "",
     courierAddressInput: "",
     courierAddressSuggestions: [],
     courierLat: null,
@@ -137,8 +137,29 @@ export default createSlice({
     apiLoaded(state) {
       state.isAPILoaded = true;
     },
+    setPhone(state, { payload }) {
+      state.phone = payload;
+    },
+    setEmail(state, { payload }) {
+      state.email = payload;
+    },
+    setComment(state, { payload }) {
+      state.comment = payload;
+    },
+    setCourierAddress(state, { payload }) {
+      state.courierAddress = payload;
+    },
     setType(state, { payload }) {
       state.type = payload;
+
+      if (payload === DeliveryType.courier) {
+        state.cdekCityTitle = "";
+        state.cdekCitySuggestions = [];
+        state.cdekCity = null;
+        state.cdekPoint = null;
+        state.cdekPoints = [];
+        state.cdekCalculation = null;
+      }
     },
     changeCdekCityTitleInput(state, { payload }) {
       state.cdekCity = null;
