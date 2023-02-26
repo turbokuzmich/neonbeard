@@ -42,6 +42,7 @@ import cart, {
 
 import delivery, {
   getCdekCity,
+  getCourierAddress,
   getDeliveryType,
   getCdekCitySuggestions,
   getDeliveryFormValues,
@@ -72,6 +73,7 @@ function Cart() {
   const cdekPoint = useSelector(getCdekPoint);
   const cdekPoints = useSelector(getCdekPoints);
   const cdekCalculation = useSelector(getCdekCalculation);
+  const courierAddress = useSelector(getCourierAddress);
 
   const onChanges = useMemo(
     () =>
@@ -414,9 +416,11 @@ function Cart() {
               {decline(count, ["товар", "товара", "товаров"])} на сумму{" "}
               <Price sum={subtotal} />
             </Typography>
-            <Button variant="outlined" size="medium" onClick={toItems}>
-              Изменить
-            </Button>
+            {cartState === CartState.delivery ? (
+              <Button variant="outlined" size="medium" onClick={toItems}>
+                Изменить
+              </Button>
+            ) : null}
           </Box>
         )}
         {cartState === CartState.delivery ? (
@@ -430,16 +434,15 @@ function Cart() {
             <Form>
               <Box
                 sx={{
-                  display: "flex",
                   gap: 2,
+                  display: "flex",
                   alignItems: "center",
-                  mb: 4,
                 }}
               >
                 <Typography variant="h4" sx={{ flexGrow: 1 }}>
                   Доставка
                 </Typography>
-                {cdekPoint && cdekCalculation ? (
+                {type === DeliveryType.cdek && cdekPoint && cdekCalculation ? (
                   <Typography variant="h6">
                     В пункт «{cdekPoint.name}» на сумму{" "}
                     <Price sum={cdekCalculation.total_sum} /> (
@@ -557,6 +560,74 @@ function Cart() {
               <ToPaymentButton />
             </Form>
           </Formik>
+        ) : null}
+        {cartState === CartState.payment ? (
+          <>
+            <Box
+              sx={{
+                mb: 4,
+                gap: 2,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="h4" sx={{ flexGrow: 1 }}>
+                Доставка
+              </Typography>
+              {type === DeliveryType.cdek && cdekPoint && cdekCalculation ? (
+                <Typography variant="h6">
+                  В пункт «{cdekPoint.name}» на сумму{" "}
+                  <Price sum={cdekCalculation.total_sum} /> (
+                  {cdekCalculation.period_min === cdekCalculation.period_max ? (
+                    <>
+                      {cdekCalculation.period_max}{" "}
+                      {decline(cdekCalculation.period_max, [
+                        "день",
+                        "дня",
+                        "дней",
+                      ])}
+                    </>
+                  ) : (
+                    <>
+                      {cdekCalculation.period_min} –{" "}
+                      {cdekCalculation.period_max}{" "}
+                      {decline(cdekCalculation.period_max, [
+                        "день",
+                        "дня",
+                        "дней",
+                      ])}
+                    </>
+                  )}
+                  )
+                </Typography>
+              ) : null}
+              {type === DeliveryType.courier ? (
+                <Typography
+                  variant="h6"
+                  sx={{
+                    pl: 3,
+                    width: 300,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {courierAddress.trim().length > 0
+                    ? courierAddress.trim()
+                    : "Адрес не указан"}
+                </Typography>
+              ) : null}
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                clear: "both",
+              }}
+            >
+              <Progress />
+            </Box>
+          </>
         ) : null}
       </Box>
     </>
