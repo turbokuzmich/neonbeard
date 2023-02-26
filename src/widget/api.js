@@ -56,6 +56,13 @@ const getCdekCities = withCSRFCheck(async (title) => {
     .catch(() => []);
 });
 
+const getOrder = withCSRFCheck(async (token = "") => {
+  return api
+    .get("/order", { params: { token } })
+    .then((response) => get(response, ["data", "order"], null))
+    .catch(() => null);
+});
+
 const getCdekPoints = withCSRFCheck(async (city) => {
   return api
     .get("/cdek/points", { params: { city } })
@@ -80,6 +87,7 @@ const checkout = withCSRFCheck(async (data) => {
 export default {
   getCart,
   checkout,
+  getOrder,
   getCatalog,
   changeItem,
   getCdekCities,

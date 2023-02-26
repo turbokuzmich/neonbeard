@@ -20,6 +20,11 @@ if (Cookies.get("payment")) {
       setupCart(store);
     });
   }
+  if (document.getElementById("order-root")) {
+    import("./order").then(function ({ default: setupOrder }) {
+      setupOrder(store);
+    });
+  }
 }
 
 window.store = store;
