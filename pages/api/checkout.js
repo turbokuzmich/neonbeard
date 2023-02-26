@@ -13,6 +13,20 @@ import sequelize, {
   Session,
   CartItem,
 } from "../../lib/backend/sequelize";
+import { DeliveryType } from "../../constants/delivery";
+
+async function calculateCdek(orderData) {
+  if (orderData.type === DeliveryType.courier) {
+    return 0;
+  }
+
+  const { total_sum } = await calculate(
+    orderData.cdekCity,
+    orderData.cdekPointAddress
+  );
+
+  return total_sum;
+}
 
 async function doCheckout(req, res) {
   const db = await sequelize;
@@ -40,21 +54,19 @@ async function doCheckout(req, res) {
   const orderTransaction = await db.transaction();
 
   try {
-    // const [{ total_sum: delivery }, subtotal] = await Promise.all([
-    //   await calculate(orderData.city, orderData.address),
-    //   await session.getCartTotal(),
-    // ]);
+    const [delivery, subtotal] = await Promise.all([
+      await calculateCdek(orderData),
+      await session.getCartTotal(),
+    ]);
 
-    // const order = await Order.create({
-    //   ...orderData,
-    //   subtotal,
-    //   delivery,
-    //   total: subtotal + delivery,
-    // });
+    const order = await Order.create({
+      ...orderData,
+      subtotal,
+      delivery,
+      total: subtotal + delivery,
+    });
 
-    // await OrderItem.bulkCreate(
-    //   cartItems.map((item) => ({ ...item.orderData, OrderId: order.id }))
-    // );
+    await OrderItem.bulkCreate(await session.getOrderItemsData(order.id));
 
     await orderTransaction.commit();
 

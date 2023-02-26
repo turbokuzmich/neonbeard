@@ -434,6 +434,7 @@ function Cart() {
             <Form>
               <Box
                 sx={{
+                  mb: 2,
                   gap: 2,
                   display: "flex",
                   alignItems: "center",

@@ -1,6 +1,6 @@
 import cart, { startTimer, stopTimer } from "../slices/cart";
 import catalog from "../slices/catalog";
-import delivery from "../slices/delivery";
+import delivery, { getDeliveryFormValues } from "../slices/delivery";
 
 import {
   all,
@@ -148,6 +148,23 @@ export function* calculateCdekTariff({ payload: point }) {
   }
 }
 
+export function* handlePayment() {
+  try {
+    const info = yield select(getDeliveryFormValues);
+
+    const { checkout } = yield getContext("api");
+
+    const url = yield call(checkout, info);
+    // const {
+    //   data: { url },
+    // } = yield call([api, api.post], "/checkout", info);
+
+    // location.href = url;
+  } catch (_) {
+    // FIXME log error
+  }
+}
+
 export default function* root() {
   yield all([
     takeLatest(cart.actions.changeItem, changeItem),
@@ -158,6 +175,7 @@ export default function* root() {
     ),
     takeLatest(delivery.actions.setCdekCity, fetchCdekPointsSuggestions),
     takeLatest(delivery.actions.setCdekPoint, calculateCdekTariff),
+    takeLatest(cart.actions.toPayment, handlePayment),
   ]);
 
   yield spawn(fetchCatalog);

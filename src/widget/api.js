@@ -70,8 +70,16 @@ const calculateCdekTariff = withCSRFCheck(async (code, address) => {
     .catch(() => []);
 });
 
+const checkout = withCSRFCheck(async (data) => {
+  return api
+    .post("/checkout", data)
+    .then((response) => get(response, ["data", "url"]))
+    .catch(() => undefined);
+});
+
 export default {
   getCart,
+  checkout,
   getCatalog,
   changeItem,
   getCdekCities,

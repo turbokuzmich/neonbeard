@@ -32,6 +32,7 @@ export const getCourierLng = createSelector(
   property("courierLng")
 );
 export const getCdekCity = createSelector(getDelivery, property("cdekCity"));
+export const getCdekCityCode = createSelector(getCdekCity, property("code"));
 export const getCdekPoints = createSelector(
   getDelivery,
   property("cdekPoints")
@@ -68,7 +69,7 @@ export const getDeliveryFormValues = createSelector(
   getCourierAddress,
   getCourierLat,
   getCourierLng,
-  getCdekCity,
+  getCdekCityCode,
   getCdekPointTitle,
   getCdekPointCode,
   getCdekPointAddress,
