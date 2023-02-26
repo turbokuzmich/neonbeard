@@ -3,6 +3,9 @@ import withSession from "../../lib/backend/session";
 import { csrf } from "../../lib/backend/csrf";
 import cors from "../../lib/backend/cors";
 
+// TODO move
+import "../../lib/backend/cron";
+
 async function getCart(req, res) {
   await withSession(
     async function (session) {

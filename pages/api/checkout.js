@@ -84,7 +84,7 @@ async function doCheckout(req, res) {
 }
 
 async function finalizeCheckout(req, res) {
-  const { s, order: id, locale = "ru" } = req.query;
+  const { s, order: id } = req.query;
 
   const order = await Order.getByExternalId(id);
 
