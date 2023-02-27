@@ -3,7 +3,7 @@ import get from "lodash/get";
 import property from "lodash/property";
 import { Order } from "../../lib/backend/sequelize";
 
-export default cors(async function (req, res) {
+export default async function (req, res) {
   const token = get(req, ["query", "token"], "-");
 
   const parts = token.split("-");
@@ -28,4 +28,4 @@ export default cors(async function (req, res) {
       items: items.map(property("viewData")),
     },
   });
-});
+}

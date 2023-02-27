@@ -107,14 +107,12 @@ async function finalizeCheckout(req, res) {
   res.redirect(order.infoUrl);
 }
 
-export default cors(
-  csrf(async function (req, res) {
-    if (req.method === "GET") {
-      return finalizeCheckout(req, res);
-    } else if (req.method === "POST") {
-      return doCheckout(req, res);
-    } else {
-      res.status(405).json({});
-    }
-  })
-);
+export default csrf(async function (req, res) {
+  if (req.method === "GET") {
+    return finalizeCheckout(req, res);
+  } else if (req.method === "POST") {
+    return doCheckout(req, res);
+  } else {
+    res.status(405).json({});
+  }
+});

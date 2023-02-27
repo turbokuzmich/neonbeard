@@ -5,10 +5,10 @@ const checkSession = setup(async function (req, res) {
   res.status(200).json({ message: "ok" });
 });
 
-export default cors(async function (req, res) {
+export default async function (req, res) {
   if (req.method === "GET") {
     return checkSession(req, res);
   }
 
   res.status(405).json({ message: "Method not allowed" });
-});
+}

@@ -52,14 +52,12 @@ async function updateCart(req, res) {
   res.status(200).json({ items: session.items });
 }
 
-export default cors(
-  csrf(async function (req, res) {
-    if (req.method === "GET") {
-      return getCart(req, res);
-    } else if (req.method === "POST") {
-      return updateCart(req, res);
-    } else {
-      res.status(405).json({});
-    }
-  })
-);
+export default csrf(async function (req, res) {
+  if (req.method === "GET") {
+    return getCart(req, res);
+  } else if (req.method === "POST") {
+    return updateCart(req, res);
+  } else {
+    res.status(405).json({});
+  }
+});

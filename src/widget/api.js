@@ -3,7 +3,7 @@ import get from "lodash/get";
 import throttle from "lodash/throttle";
 
 const api = axios.create({
-  baseURL: "https://neonbeard.ru/api",
+  baseURL: "https://neon-beard.ru/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
