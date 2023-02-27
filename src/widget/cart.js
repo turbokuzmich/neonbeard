@@ -303,9 +303,19 @@ function Cart() {
                   <Box
                     key={uid}
                     sx={{
-                      gap: 4,
+                      gap: {
+                        xs: 2,
+                        md: 4,
+                      },
                       display: "flex",
-                      alignItems: "flex-start",
+                      alignItems: {
+                        xs: "center",
+                        md: "flex-start",
+                      },
+                      flexDirection: {
+                        xs: "column",
+                        md: "row",
+                      },
                     }}
                   >
                     <Box
@@ -333,48 +343,84 @@ function Cart() {
                         flexGrow: 1,
                         flexShrink: 1,
                         flexDirection: "column",
-                        pt: 1,
-                        pb: 1,
+                        alignItems: {
+                          xs: "center",
+                          md: "flex-start",
+                        },
+                        pt: {
+                          xs: 0,
+                          md: 1,
+                        },
+                        pb: {
+                          xs: 0,
+                          md: 1,
+                        },
                       }}
                     >
-                      <Link variant="h6" href={catalogItem.url} paragraph>
+                      <Link
+                        variant="h6"
+                        href={catalogItem.url}
+                        paragraph
+                        sx={{
+                          textAlign: {
+                            xs: "center",
+                            md: "start",
+                          },
+                        }}
+                      >
                         {catalogItem.title}
                       </Link>
                       <Typography>{catalogItem.volume}</Typography>
                     </Box>
                     <Box
                       sx={{
-                        pt: 1,
+                        pt: {
+                          xs: 0,
+                          md: 1,
+                        },
+                        gap: {
+                          xs: 2,
+                          md: 0,
+                        },
+                        flexDirection: {
+                          xs: "column",
+                          md: "row",
+                        },
                         display: "flex",
                         alignItems: "center",
                       }}
                     >
-                      <NumericStepper
-                        value={qty}
-                        inc={onChanges[index].inc}
-                        dec={onChanges[index].dec}
-                      />
-                      <Button
-                        onClick={onChanges[index].del}
-                        variant="outlined"
-                        color="secondary"
-                        size="medium"
-                        sx={{
-                          ml: 2,
-                          pl: 0,
-                          pr: 0,
-                          width: 42,
-                          minWidth: 0,
-                        }}
-                      >
-                        <DeleteIcon />
-                      </Button>
+                      <Box sx={{ display: "flex" }}>
+                        <NumericStepper
+                          value={qty}
+                          inc={onChanges[index].inc}
+                          dec={onChanges[index].dec}
+                        />
+                        <Button
+                          onClick={onChanges[index].del}
+                          variant="outlined"
+                          color="secondary"
+                          size="medium"
+                          sx={{
+                            ml: 2,
+                            pl: 0,
+                            pr: 0,
+                            width: 42,
+                            minWidth: 0,
+                          }}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </Box>
                       <Typography
                         component="div"
                         variant="h6"
                         textAlign="right"
                         sx={{
-                          minWidth: 120,
+                          minWidth: {
+                            xs: "auto",
+                            md: 120,
+                          },
                         }}
                       >
                         <Price sum={qty * catalogItem.price} />
@@ -386,9 +432,17 @@ function Cart() {
             </Box>
             <Box
               sx={{
+                gap: {
+                  xs: 2,
+                  md: 0,
+                },
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
+                flexDirection: {
+                  xs: "column-reverse",
+                  md: "row",
+                },
               }}
             >
               <Button size="large" variant="outlined" onClick={toDelivery}>
@@ -406,6 +460,10 @@ function Cart() {
               gap: 2,
               display: "flex",
               alignItems: "center",
+              flexDirection: {
+                xs: "column",
+                md: "row",
+              },
             }}
           >
             <Typography variant="h4" sx={{ flexGrow: 1 }}>
@@ -434,17 +492,29 @@ function Cart() {
             <Form>
               <Box
                 sx={{
-                  mb: 2,
+                  mb: 4,
                   gap: 2,
                   display: "flex",
                   alignItems: "center",
+                  flexDirection: {
+                    xs: "column",
+                    md: "row",
+                  },
                 }}
               >
                 <Typography variant="h4" sx={{ flexGrow: 1 }}>
                   Доставка
                 </Typography>
                 {type === DeliveryType.cdek && cdekPoint && cdekCalculation ? (
-                  <Typography variant="h6">
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      textAlign: {
+                        xs: "center",
+                        md: "start",
+                      },
+                    }}
+                  >
                     В пункт «{cdekPoint.name}» на сумму{" "}
                     <Price sum={cdekCalculation.total_sum} /> (
                     {cdekCalculation.period_min ===
@@ -477,6 +547,10 @@ function Cart() {
                   display: "flex",
                   gap: 2,
                   mb: 2,
+                  flexDirection: {
+                    xs: "column",
+                    md: "row",
+                  },
                 }}
               >
                 <PhoneInput inputRef={phoneFieldRef} onChange={onPhoneChange} />
@@ -524,12 +598,7 @@ function Cart() {
                     />
                     {cdekCity ? (
                       <>
-                        <Box
-                          ref={mapsContainerRef}
-                          sx={{
-                            height: { xs: 200, md: 400 },
-                          }}
-                        ></Box>
+                        <Box ref={mapsContainerRef} sx={{ height: 400 }}></Box>
                       </>
                     ) : null}
                   </>
@@ -571,13 +640,25 @@ function Cart() {
                 gap: 2,
                 display: "flex",
                 alignItems: "center",
+                flexDirection: {
+                  xs: "column",
+                  md: "row",
+                },
               }}
             >
               <Typography variant="h4" sx={{ flexGrow: 1 }}>
                 Доставка
               </Typography>
               {type === DeliveryType.cdek && cdekPoint && cdekCalculation ? (
-                <Typography variant="h6">
+                <Typography
+                  variant="h6"
+                  sx={{
+                    textAlign: {
+                      xs: "center",
+                      md: "start",
+                    },
+                  }}
+                >
                   В пункт «{cdekPoint.name}» на сумму{" "}
                   <Price sum={cdekCalculation.total_sum} /> (
                   {cdekCalculation.period_min === cdekCalculation.period_max ? (
