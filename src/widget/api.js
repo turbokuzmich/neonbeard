@@ -59,8 +59,7 @@ const getCdekCities = withCSRFCheck(async (title) => {
 const getOrder = withCSRFCheck(async (token = "") => {
   return api
     .get("/order", { params: { token } })
-    .then((response) => get(response, ["data", "order"], null))
-    .catch(() => null);
+    .then((response) => get(response, ["data", "order"], null));
 });
 
 const getCdekPoints = withCSRFCheck(async (city) => {

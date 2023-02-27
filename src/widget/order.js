@@ -76,7 +76,7 @@ function Order() {
 
   if (state === OrderState.failed) {
     return (
-      <Box sx={{ clear: "both" }}>
+      <Box sx={{ display: "flex", justifyContent: "center", clear: "both" }}>
         <Typography>Не удалось получить информацию о заказе</Typography>
       </Box>
     );
