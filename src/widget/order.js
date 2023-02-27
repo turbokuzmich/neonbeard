@@ -106,70 +106,163 @@ function Order() {
       <Typography variant="h4" paragraph>
         Состав заказа
       </Typography>
-      <TableContainer>
-        <Table>
-          <TableBody>
-            {order.items.map((item) => (
-              <TableRow key={`${item.title_en}-${item.capacity_en}`}>
-                <TableCell sx={{ borderBottomColor: "#ffffff" }}>
-                  <Typography variant="h6" component="div">
-                    {item.title}, {item.capacity}
-                  </Typography>
-                </TableCell>
-                <TableCell
-                  align="right"
-                  sx={{ verticalAlign: "bottom", borderBottomColor: "#ffffff" }}
-                >
-                  <Typography variant="h6" component="div">
-                    {item.qty} x <Price sum={item.price} />
-                  </Typography>
-                </TableCell>
-                <TableCell
-                  align="right"
-                  sx={{ verticalAlign: "bottom", borderBottomColor: "#ffffff" }}
-                >
-                  <Typography variant="h6" component="div">
-                    <Price sum={item.total} />
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            ))}
-            {order.type === DeliveryType.cdek ? (
+      <Box
+        sx={{
+          display: {
+            xs: "none",
+            md: "initial",
+          },
+        }}
+      >
+        <TableContainer>
+          <Table>
+            <TableBody>
+              {order.items.map((item) => (
+                <TableRow key={`${item.title_en}-${item.capacity_en}`}>
+                  <TableCell sx={{ borderBottomColor: "#ffffff" }}>
+                    <Typography variant="h6" component="div">
+                      {item.title}, {item.capacity}
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      verticalAlign: "bottom",
+                      borderBottomColor: "#ffffff",
+                    }}
+                  >
+                    <Typography variant="h6" component="div">
+                      {item.qty} x <Price sum={item.price} />
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      verticalAlign: "bottom",
+                      borderBottomColor: "#ffffff",
+                    }}
+                  >
+                    <Typography variant="h6" component="div">
+                      <Price sum={item.total} />
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {order.type === DeliveryType.cdek ? (
+                <TableRow>
+                  <TableCell sx={{ borderBottomColor: "#ffffff" }}>
+                    <Typography variant="h6" component="div">
+                      Доставка
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      verticalAlign: "bottom",
+                      borderBottomColor: "#ffffff",
+                    }}
+                  ></TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      verticalAlign: "bottom",
+                      borderBottomColor: "#ffffff",
+                    }}
+                  >
+                    <Typography variant="h6" component="div">
+                      <Price sum={order.delivery} />
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : null}
               <TableRow>
-                <TableCell sx={{ borderBottomColor: "#ffffff" }}>
-                  <Typography variant="h6" component="div">
-                    Доставка
-                  </Typography>
-                </TableCell>
+                <TableCell sx={{ borderBottom: "none" }}></TableCell>
+                <TableCell sx={{ borderBottom: "none" }}></TableCell>
                 <TableCell
                   align="right"
-                  sx={{ verticalAlign: "bottom", borderBottomColor: "#ffffff" }}
-                ></TableCell>
-                <TableCell
-                  align="right"
-                  sx={{ verticalAlign: "bottom", borderBottomColor: "#ffffff" }}
+                  sx={{ verticalAlign: "bottom", borderBottom: "none" }}
                 >
-                  <Typography variant="h6" component="div">
-                    <Price sum={order.delivery} />
+                  <Typography variant="h5">
+                    <Price sum={order.total} />
                   </Typography>
                 </TableCell>
               </TableRow>
-            ) : null}
-            <TableRow>
-              <TableCell sx={{ borderBottom: "none" }}></TableCell>
-              <TableCell sx={{ borderBottom: "none" }}></TableCell>
-              <TableCell
-                align="right"
-                sx={{ verticalAlign: "bottom", borderBottom: "none" }}
-              >
-                <Typography variant="h5">
-                  <Price sum={order.total} />
-                </Typography>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+      <Box
+        sx={{
+          gap: 2,
+          flexDirection: "column",
+          display: {
+            xs: "flex",
+            md: "none",
+          },
+        }}
+      >
+        {order.items.map((item) => (
+          <Box
+            key={`${item.title_en}-${item.capacity_en}`}
+            sx={{
+              pb: 2,
+              pl: 1,
+              pr: 1,
+              borderBottom: "solid 1px #ffffff",
+            }}
+          >
+            <Typography variant="h6" component="div">
+              {item.title}
+            </Typography>
+            <Typography paragraph>{item.capacity}</Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography sx={{ whiteSpace: "nowrap" }}>
+                {item.qty} x <Price sum={item.price} />
+              </Typography>
+              <Typography>
+                <Price sum={item.total} />
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+        {order.type === DeliveryType.cdek ? (
+          <Box
+            sx={{
+              pb: 2,
+              pl: 1,
+              pr: 1,
+              display: "flex",
+              justifyContent: "space-between",
+              borderBottom: "solid 1px #ffffff",
+            }}
+          >
+            <Typography variant="h6" component="div">
+              Доставка
+            </Typography>
+            <Typography>
+              <Price sum={order.delivery} />
+            </Typography>
+          </Box>
+        ) : null}
+        <Box
+          sx={{
+            pb: 2,
+            pl: 1,
+            pr: 1,
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Typography variant="h5">
+            <Price sum={order.total} />
+          </Typography>
+        </Box>
+      </Box>
     </>
   );
 }
