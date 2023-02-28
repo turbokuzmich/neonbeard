@@ -569,7 +569,7 @@ function Cart() {
                     Пункт выдачи СДЭК
                   </ToggleButton>
                   <ToggleButton value={DeliveryType.courier}>
-                    Курьером мо Москве
+                    Курьером мо Москве и МО
                   </ToggleButton>
                 </ToggleButtonGroup>
               </Box>
