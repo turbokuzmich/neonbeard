@@ -12,7 +12,7 @@ export default async function (req, res) {
     where: {
       [Op.or]: [
         { city: { [Op.like]: `%${title}%` } },
-        { region: { [Op.like]: `%${title}%` } },
+        // { region: { [Op.like]: `%${title}%` } },
       ],
     },
     limit: 10,
