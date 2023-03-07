@@ -4,8 +4,9 @@ import { createPayment } from "../../lib/backend/yookassa";
 import { calculate } from "../../lib/backend/cdek";
 // import { notifyOfNewOrder } from "../../lib/backend/bot";
 import { csrf } from "../../lib/backend/csrf";
+import { send } from "../../lib/backend/queue";
 import { checkoutValidationSchema } from "../../lib/helpers/validation";
-import cors from "../../lib/backend/cors";
+import noop from "lodash/noop";
 
 import sequelize, {
   Order,
@@ -72,7 +73,10 @@ async function doCheckout(req, res) {
 
     const url = await createPayment(order);
 
-    // await Promise.all([sendNewOrderEmail(order), notifyOfNewOrder(order)]);
+    send({
+      type: "neon-beard",
+      message: `Создан заказ №${order.id} на сумму ${order.total}₽ (+7${order.phone})`,
+    }).then(noop, noop);
 
     res.status(200).json({ url });
   } catch (error) {

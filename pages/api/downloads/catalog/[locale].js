@@ -8,7 +8,7 @@ export default async function downloadCatalog(req, res) {
 
   const { Contents } = await s3
     .listObjects({
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
       Prefix: `catalog/neon-beard/${locale}`,
     })
     .promise();
@@ -21,7 +21,7 @@ export default async function downloadCatalog(req, res) {
   });
 
   res.redirect(
-    `https://${process.env.AWS_BUCKET_NAME}.storage.yandexcloud.net/${Key}`,
+    `https://${process.env.AWS_S3_BUCKET_NAME}.storage.yandexcloud.net/${Key}`,
     301
   );
 }
