@@ -1,4 +1,5 @@
-import s3 from "../../../../lib/backend/aws";
+import s3 from "../../../../lib/backend/s3";
+import { send } from "../../../../lib/backend/queue";
 import get from "lodash/get";
 import last from "lodash/last";
 
@@ -13,6 +14,11 @@ export default async function downloadCatalog(req, res) {
     .promise();
 
   const { Key } = last(Contents);
+
+  await send({
+    type: "neon-beard",
+    message: `Кто-то скачал ${locale} каталог`,
+  });
 
   res.redirect(
     `https://${process.env.AWS_BUCKET_NAME}.storage.yandexcloud.net/${Key}`,
