@@ -4,7 +4,7 @@ import { createPayment } from "../../lib/backend/yookassa";
 import { calculate } from "../../lib/backend/cdek";
 // import { notifyOfNewOrder } from "../../lib/backend/bot";
 import { csrf } from "../../lib/backend/csrf";
-import { send } from "../../lib/backend/queue";
+import { sendOrder } from "../../lib/backend/queue";
 import { checkoutValidationSchema } from "../../lib/helpers/validation";
 import noop from "lodash/noop";
 
@@ -73,10 +73,7 @@ async function doCheckout(req, res) {
 
     const url = await createPayment(order);
 
-    send({
-      type: "neon-beard",
-      message: `Создан заказ №${order.id} на сумму ${order.total}₽ (+7${order.phone})`,
-    }).then(noop, noop);
+    sendOrder(order).then(noop).catch(noop);
 
     res.status(200).json({ url });
   } catch (error) {

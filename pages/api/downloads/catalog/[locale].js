@@ -1,7 +1,8 @@
 import s3 from "../../../../lib/backend/s3";
-import { send } from "../../../../lib/backend/queue";
+import { sendDownload } from "../../../../lib/backend/queue";
 import get from "lodash/get";
 import last from "lodash/last";
+import noop from "lodash/noop";
 
 export default async function downloadCatalog(req, res) {
   const locale = getLocale(req);
@@ -15,10 +16,7 @@ export default async function downloadCatalog(req, res) {
 
   const { Key } = last(Contents);
 
-  await send({
-    type: "neon-beard",
-    message: `Кто-то скачал ${locale} каталог`,
-  });
+  sendDownload(locale).then(noop).catch(noop);
 
   res.redirect(
     `https://${process.env.AWS_S3_BUCKET_NAME}.storage.yandexcloud.net/${Key}`,
