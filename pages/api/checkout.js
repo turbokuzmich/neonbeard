@@ -51,7 +51,6 @@ async function doCheckout(req, res) {
     return res.status(404).json({});
   }
 
-  const cartItems = session.CartItems;
   const orderTransaction = await db.transaction();
 
   try {
