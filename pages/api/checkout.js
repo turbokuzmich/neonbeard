@@ -16,14 +16,16 @@ import sequelize, {
 } from "../../lib/backend/sequelize";
 import { DeliveryType } from "../../constants/delivery";
 
-async function calculateCdek(orderData) {
+async function calculateCdek(orderData, weight, total) {
   if (orderData.type === DeliveryType.courier) {
     return 0;
   }
 
   const { total_sum } = await calculate(
     orderData.cdekCity,
-    orderData.cdekPointAddress
+    orderData.cdekPointAddress,
+    weight,
+    total
   );
 
   return total_sum;
@@ -54,10 +56,12 @@ async function doCheckout(req, res) {
   const orderTransaction = await db.transaction();
 
   try {
-    const [delivery, subtotal] = await Promise.all([
-      await calculateCdek(orderData),
+    const [subtotal, weight] = await Promise.all([
       await session.getCartTotal(),
+      await session.getCartWeight(),
     ]);
+
+    const delivery = await calculateCdek(orderData, weight, subtotal);
 
     const order = await Order.create({
       ...orderData,
