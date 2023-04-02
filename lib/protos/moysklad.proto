@@ -1,0 +1,15 @@
+syntax="proto3";
+
+service MoySklad {
+    rpc getNeonAssortment(NeonRequest) returns (stream NeonItem);
+}
+
+message NeonRequest {
+}
+
+message NeonItem {
+    string id = 1;
+    string name = 2;
+    int32 balance = 3;
+    int32 price = 4;
+}
