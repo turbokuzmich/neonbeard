@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import theme from "./theme";
 import dom from "react-dom/client";
 import decline from "../../lib/helpers/declension";
@@ -74,6 +75,29 @@ function Cart() {
   const cdekPoints = useSelector(getCdekPoints);
   const cdekCalculation = useSelector(getCdekCalculation);
   const courierAddress = useSelector(getCourierAddress);
+
+  const showTcbCreditWidget = useMemo(
+    () =>
+      Boolean(Cookies.get("payment")) && subtotal >= 3125 && subtotal <= 520833,
+    [subtotal]
+  );
+  const tcbCreditPaymentData = useMemo(() => {
+    return items
+      .reduce(
+        (data, { itemId, variantId, qty }, index) => {
+          const uid = getUniversalId({ id: itemId, variant: variantId });
+          const catalogItem = universal[uid];
+
+          return data.concat([
+            `items.${index}.name=${catalogItem.title}`,
+            `items.${index}.price=${catalogItem.price}`,
+            `items.${index}.quantity=${qty}`,
+          ]);
+        },
+        [`sum=${subtotal}`, "promoCode=installment_0_0_3_4", "demoFlow=sms"]
+      )
+      .join("&");
+  }, [items, subtotal]);
 
   const onChanges = useMemo(
     () =>
@@ -452,6 +476,17 @@ function Cart() {
                 Итого: <Price sum={subtotal} />
               </Typography>
             </Box>
+            {showTcbCreditWidget ? (
+              <Box>
+                <tinkoff-create-button
+                  size="M"
+                  shopId="f3902731-7eba-4740-baa4-e92026eaebcd"
+                  showcaseId="787e5e5d-bd06-47b9-a881-4d6e38eca829"
+                  subtext=""
+                  payment-data={tcbCreditPaymentData}
+                ></tinkoff-create-button>
+              </Box>
+            ) : null}
           </>
         ) : (
           <Box
