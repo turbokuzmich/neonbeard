@@ -24,6 +24,7 @@ import { getUniversalId } from "../../lib/helpers/catalog";
 import { ThemeProvider } from "@mui/material/styles";
 import { Provider, useSelector, useDispatch } from "react-redux";
 import { phoneFormat } from "../../constants/contacts";
+import { minSum, maxSum } from "../../constants/tcb";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import identity from "lodash/identity";
 
@@ -76,9 +77,9 @@ function Cart() {
   const cdekCalculation = useSelector(getCdekCalculation);
   const courierAddress = useSelector(getCourierAddress);
 
+  const isTcbEnabled = true; // Boolean(Cookies.get("payment"));
   const showTcbCreditWidget = useMemo(
-    () =>
-      Boolean(Cookies.get("payment")) && subtotal >= 3125 && subtotal <= 520833,
+    () => subtotal >= minSum && subtotal <= maxSum,
     [subtotal]
   );
   const tcbCreditPaymentData = useMemo(() => {
@@ -89,6 +90,7 @@ function Cart() {
           const catalogItem = universal[uid];
 
           return data.concat([
+            // `demoFlow=sms`,
             `items.${index}.name=${catalogItem.title}`,
             `items.${index}.price=${catalogItem.price}`,
             `items.${index}.quantity=${qty}`,
@@ -460,6 +462,7 @@ function Cart() {
                   xs: 2,
                   md: 0,
                 },
+                mb: 4,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -476,7 +479,15 @@ function Cart() {
                 Итого: <Price sum={subtotal} />
               </Typography>
             </Box>
-            {showTcbCreditWidget ? (
+            {isTcbEnabled && !showTcbCreditWidget ? (
+              <Box>
+                <Typography>
+                  При заказе от <Price sum={minSum} /> возможно оформление
+                  рассрочки
+                </Typography>
+              </Box>
+            ) : null}
+            {isTcbEnabled && showTcbCreditWidget ? (
               <Box>
                 <tinkoff-create-button
                   size="M"
