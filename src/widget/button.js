@@ -21,6 +21,11 @@ import cart, {
   getCartSubtotal,
 } from "../../store/slices/cart";
 
+const notificationAnchor = {
+  vertical: "bottom",
+  horizontal: "center",
+};
+
 function Notification() {
   const dispatch = useDispatch();
 
@@ -37,7 +42,12 @@ function Notification() {
   const onAlertOver = useCallback(() => dispatch(stopTimer()), [dispatch]);
 
   return (
-    <Snackbar open={notification} onClose={handleClose} autoHideDuration={6000}>
+    <Snackbar
+      open={notification}
+      onClose={handleClose}
+      autoHideDuration={6000}
+      anchorOrigin={notificationAnchor}
+    >
       <Alert
         severity="success"
         onClose={handleClose}
@@ -55,7 +65,7 @@ function Notification() {
           variant="contained"
           startIcon={<LocalShippingIcon />}
         >
-          Оформить доставку
+          Купить
         </Button>
       </Alert>
     </Snackbar>

@@ -89,12 +89,14 @@ function Cart() {
           const uid = getUniversalId({ id: itemId, variant: variantId });
           const catalogItem = universal[uid];
 
-          return data.concat([
-            // `demoFlow=sms`,
-            `items.${index}.name=${catalogItem.title}`,
-            `items.${index}.price=${catalogItem.price}`,
-            `items.${index}.quantity=${qty}`,
-          ]);
+          return catalogItem
+            ? data.concat([
+                // `demoFlow=sms`,
+                `items.${index}.name=${catalogItem.title}`,
+                `items.${index}.price=${catalogItem.price}`,
+                `items.${index}.quantity=${qty}`,
+              ])
+            : data;
         },
         [`sum=${subtotal}`, "promoCode=installment_0_0_3_4", "demoFlow=sms"]
       )
@@ -458,46 +460,59 @@ function Cart() {
             </Box>
             <Box
               sx={{
-                gap: {
-                  xs: 2,
-                  md: 0,
-                },
                 mb: 4,
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexDirection: {
-                  xs: "column-reverse",
-                  md: "row",
+                justifyContent: {
+                  xs: "center",
+                  md: "flex-end",
                 },
               }}
             >
-              <Button size="large" variant="outlined" onClick={toDelivery}>
-                Оформить доставку
-              </Button>
               <Typography variant="h5">
                 Итого: <Price sum={subtotal} />
               </Typography>
             </Box>
-            {isTcbEnabled && !showTcbCreditWidget ? (
-              <Box>
+            <Box
+              sx={{
+                gap: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: {
+                  xs: "center",
+                  md: "flex-end",
+                },
+                flexDirection: {
+                  xs: "column",
+                  md: "row",
+                },
+              }}
+            >
+              {isTcbEnabled && !showTcbCreditWidget ? (
                 <Typography>
                   При заказе от <Price sum={minSum} /> возможно оформление
                   рассрочки
                 </Typography>
-              </Box>
-            ) : null}
-            {isTcbEnabled && showTcbCreditWidget ? (
-              <Box>
+              ) : null}
+              {isTcbEnabled && showTcbCreditWidget ? (
                 <tinkoff-create-button
                   size="M"
                   shopId="f3902731-7eba-4740-baa4-e92026eaebcd"
                   showcaseId="787e5e5d-bd06-47b9-a881-4d6e38eca829"
                   subtext=""
                   payment-data={tcbCreditPaymentData}
-                ></tinkoff-create-button>
-              </Box>
-            ) : null}
+                />
+              ) : null}
+              <Button
+                size="large"
+                variant="outlined"
+                onClick={toDelivery}
+                sx={{
+                  height: 56,
+                }}
+              >
+                Купить онлайн
+              </Button>
+            </Box>
           </>
         ) : (
           <Box
