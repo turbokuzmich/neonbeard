@@ -510,7 +510,7 @@ function Cart() {
                   height: 56,
                 }}
               >
-                Купить онлайн
+                Оплатить
               </Button>
             </Box>
           </>

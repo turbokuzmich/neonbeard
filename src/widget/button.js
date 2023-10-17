@@ -65,7 +65,7 @@ function Notification() {
           variant="contained"
           startIcon={<LocalShippingIcon />}
         >
-          Купить
+          Оплатить
         </Button>
       </Alert>
     </Snackbar>
