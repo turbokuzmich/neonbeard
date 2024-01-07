@@ -11,6 +11,7 @@ export const GeoCodingStatus = {
 
 export const getDelivery = (state) => state.delivery;
 
+export const getDeliveryFio = createSelector(getDelivery, property("fio"));
 export const getDeliveryPhone = createSelector(getDelivery, property("phone"));
 export const getDeliveryEmail = createSelector(getDelivery, property("email"));
 export const getDeliveryType = createSelector(getDelivery, property("type"));
@@ -62,6 +63,7 @@ export const getCdekPointLng = createSelector(
 );
 
 export const getDeliveryFormValues = createSelector(
+  getDeliveryFio,
   getDeliveryPhone,
   getDeliveryEmail,
   getDeliveryComment,
@@ -76,6 +78,7 @@ export const getDeliveryFormValues = createSelector(
   getCdekPointLat,
   getCdekPointLng,
   (
+    fio,
     phone,
     email,
     comment,
@@ -90,6 +93,7 @@ export const getDeliveryFormValues = createSelector(
     cdekPointLat,
     cdekPointLng
   ) => ({
+    fio,
     phone,
     email,
     comment,
@@ -114,6 +118,7 @@ export default createSlice({
 
     type: DeliveryType.cdek,
 
+    fio: "",
     phone: "",
     email: "",
     comment: "",
@@ -137,6 +142,9 @@ export default createSlice({
   reducers: {
     apiLoaded(state) {
       state.isAPILoaded = true;
+    },
+    setFio(state, { payload }) {
+      state.fio = payload;
     },
     setPhone(state, { payload }) {
       state.phone = payload;

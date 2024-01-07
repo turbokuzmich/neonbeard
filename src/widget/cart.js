@@ -163,6 +163,11 @@ function Cart() {
     [dispatch]
   );
 
+  const onFioChange = useCallback(
+    (fio) => dispatch(delivery.actions.setFio(fio)),
+    [dispatch]
+  );
+
   const onPhoneChange = useCallback(
     (phone) => dispatch(delivery.actions.setPhone(phone)),
     [dispatch]
@@ -311,390 +316,245 @@ function Cart() {
   }
 
   return (
-    <>
-      <Box sx={{ clear: "both" }}>
-        {cartState === CartState.fetched ? (
-          <>
-            <Box
-              sx={{
-                mb: 4,
-                gap: 4,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {items.map(({ itemId, variantId, qty }, index) => {
-                const uid = getUniversalId({ id: itemId, variant: variantId });
-                const catalogItem = universal[uid];
+    <Box sx={{ clear: "both" }}>
+      {cartState === CartState.fetched ? (
+        <>
+          <Box
+            sx={{
+              mb: 4,
+              gap: 4,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {items.map(({ itemId, variantId, qty }, index) => {
+              const uid = getUniversalId({ id: itemId, variant: variantId });
+              const catalogItem = universal[uid];
 
-                return (
+              return (
+                <Box
+                  key={uid}
+                  sx={{
+                    gap: {
+                      xs: 2,
+                      md: 4,
+                    },
+                    display: "flex",
+                    alignItems: {
+                      xs: "center",
+                      md: "flex-start",
+                    },
+                    flexDirection: {
+                      xs: "column",
+                      md: "row",
+                    },
+                  }}
+                >
                   <Box
-                    key={uid}
                     sx={{
-                      gap: {
-                        xs: 2,
-                        md: 4,
-                      },
+                      maxWidth: 130,
+                      flexGrow: 0,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Link sx={{ display: "block" }} href={catalogItem.url}>
+                      <Image
+                        src={catalogItem.image}
+                        alt={catalogItem.title}
+                        sx={{
+                          maxWidth: "100%",
+                          userSelect: "none",
+                          display: "block",
+                        }}
+                      />
+                    </Link>
+                  </Box>
+                  <Box
+                    sx={{
                       display: "flex",
+                      flexGrow: 1,
+                      flexShrink: 1,
+                      flexDirection: "column",
                       alignItems: {
                         xs: "center",
                         md: "flex-start",
+                      },
+                      pt: {
+                        xs: 0,
+                        md: 1,
+                      },
+                      pb: {
+                        xs: 0,
+                        md: 1,
+                      },
+                    }}
+                  >
+                    <Link
+                      variant="h6"
+                      href={catalogItem.url}
+                      paragraph
+                      sx={{
+                        textAlign: {
+                          xs: "center",
+                          md: "start",
+                        },
+                      }}
+                    >
+                      {catalogItem.title}
+                    </Link>
+                    <Typography>{catalogItem.volume}</Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      pt: {
+                        xs: 0,
+                        md: 1,
+                      },
+                      gap: {
+                        xs: 2,
+                        md: 0,
                       },
                       flexDirection: {
                         xs: "column",
                         md: "row",
                       },
+                      display: "flex",
+                      alignItems: "center",
                     }}
                   >
-                    <Box
-                      sx={{
-                        maxWidth: 130,
-                        flexGrow: 0,
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Link sx={{ display: "block" }} href={catalogItem.url}>
-                        <Image
-                          src={catalogItem.image}
-                          alt={catalogItem.title}
-                          sx={{
-                            maxWidth: "100%",
-                            userSelect: "none",
-                            display: "block",
-                          }}
-                        />
-                      </Link>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexGrow: 1,
-                        flexShrink: 1,
-                        flexDirection: "column",
-                        alignItems: {
-                          xs: "center",
-                          md: "flex-start",
-                        },
-                        pt: {
-                          xs: 0,
-                          md: 1,
-                        },
-                        pb: {
-                          xs: 0,
-                          md: 1,
-                        },
-                      }}
-                    >
-                      <Link
-                        variant="h6"
-                        href={catalogItem.url}
-                        paragraph
+                    <Box sx={{ display: "flex" }}>
+                      <NumericStepper
+                        value={qty}
+                        inc={onChanges[index].inc}
+                        dec={onChanges[index].dec}
+                      />
+                      <Button
+                        onClick={onChanges[index].del}
+                        variant="outlined"
+                        color="secondary"
+                        size="medium"
                         sx={{
-                          textAlign: {
-                            xs: "center",
-                            md: "start",
-                          },
+                          ml: 2,
+                          pl: 0,
+                          pr: 0,
+                          width: 42,
+                          minWidth: 0,
                         }}
                       >
-                        {catalogItem.title}
-                      </Link>
-                      <Typography>{catalogItem.volume}</Typography>
+                        <DeleteIcon />
+                      </Button>
                     </Box>
-                    <Box
+                    <Typography
+                      component="div"
+                      variant="h6"
+                      textAlign="right"
                       sx={{
-                        pt: {
-                          xs: 0,
-                          md: 1,
+                        minWidth: {
+                          xs: "auto",
+                          md: 120,
                         },
-                        gap: {
-                          xs: 2,
-                          md: 0,
-                        },
-                        flexDirection: {
-                          xs: "column",
-                          md: "row",
-                        },
-                        display: "flex",
-                        alignItems: "center",
                       }}
                     >
-                      <Box sx={{ display: "flex" }}>
-                        <NumericStepper
-                          value={qty}
-                          inc={onChanges[index].inc}
-                          dec={onChanges[index].dec}
-                        />
-                        <Button
-                          onClick={onChanges[index].del}
-                          variant="outlined"
-                          color="secondary"
-                          size="medium"
-                          sx={{
-                            ml: 2,
-                            pl: 0,
-                            pr: 0,
-                            width: 42,
-                            minWidth: 0,
-                          }}
-                        >
-                          <DeleteIcon />
-                        </Button>
-                      </Box>
-                      <Typography
-                        component="div"
-                        variant="h6"
-                        textAlign="right"
-                        sx={{
-                          minWidth: {
-                            xs: "auto",
-                            md: 120,
-                          },
-                        }}
-                      >
-                        <Price sum={qty * catalogItem.price} />
-                      </Typography>
-                    </Box>
+                      <Price sum={qty * catalogItem.price} />
+                    </Typography>
                   </Box>
-                );
-              })}
-            </Box>
-            <Box
-              sx={{
-                mb: 4,
-                display: "flex",
-                justifyContent: {
-                  xs: "center",
-                  md: "flex-end",
-                },
-              }}
-            >
-              <Typography variant="h5">
-                Итого: <Price sum={subtotal} />
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                gap: 2,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: {
-                  xs: "center",
-                  md: "flex-end",
-                },
-                flexDirection: {
-                  xs: "column",
-                  md: "row",
-                },
-              }}
-            >
-              {isTcbEnabled && !showTcbCreditWidget ? (
-                <Typography>
-                  При заказе от <Price sum={minSum} /> возможно оформление
-                  рассрочки
-                </Typography>
-              ) : null}
-              {isTcbEnabled && showTcbCreditWidget ? (
-                <tinkoff-create-button
-                  size="M"
-                  shopId="f3902731-7eba-4740-baa4-e92026eaebcd"
-                  showcaseId="787e5e5d-bd06-47b9-a881-4d6e38eca829"
-                  subtext=""
-                  payment-data={tcbCreditPaymentData}
-                />
-              ) : null}
-              <Button
-                size="large"
-                variant="outlined"
-                onClick={toDelivery}
-                sx={{
-                  height: 56,
-                }}
-              >
-                Оплатить
-              </Button>
-            </Box>
-          </>
-        ) : (
+                </Box>
+              );
+            })}
+          </Box>
           <Box
             sx={{
               mb: 4,
+              display: "flex",
+              justifyContent: {
+                xs: "center",
+                md: "flex-end",
+              },
+            }}
+          >
+            <Typography variant="h5">
+              Итого: <Price sum={subtotal} />
+            </Typography>
+          </Box>
+          <Box
+            sx={{
               gap: 2,
               display: "flex",
               alignItems: "center",
+              justifyContent: {
+                xs: "center",
+                md: "flex-end",
+              },
               flexDirection: {
                 xs: "column",
                 md: "row",
               },
             }}
           >
-            <Typography variant="h4" sx={{ flexGrow: 1 }}>
-              Товары
-            </Typography>
-            <Typography variant="h6">
-              <Number value={count} />{" "}
-              {decline(count, ["товар", "товара", "товаров"])} на сумму{" "}
-              <Price sum={subtotal} />
-            </Typography>
-            {cartState === CartState.delivery ? (
-              <Button variant="outlined" size="medium" onClick={toItems}>
-                Изменить
-              </Button>
+            {isTcbEnabled && !showTcbCreditWidget ? (
+              <Typography>
+                При заказе от <Price sum={minSum} /> возможно оформление
+                рассрочки
+              </Typography>
             ) : null}
+            {isTcbEnabled && showTcbCreditWidget ? (
+              <tinkoff-create-button
+                size="M"
+                shopId="f3902731-7eba-4740-baa4-e92026eaebcd"
+                showcaseId="787e5e5d-bd06-47b9-a881-4d6e38eca829"
+                subtext=""
+                payment-data={tcbCreditPaymentData}
+              />
+            ) : null}
+            <Button
+              size="large"
+              variant="outlined"
+              onClick={toDelivery}
+              sx={{
+                height: 56,
+              }}
+            >
+              Оплатить
+            </Button>
           </Box>
-        )}
-        {cartState === CartState.delivery ? (
-          <Formik
-            onSubmit={toPayment}
-            initialValues={formValues}
-            validationSchema={checkoutValidationSchema}
-            enableReinitialize
-            validateOnMount
-          >
-            <Form>
-              <Box
-                sx={{
-                  mb: 4,
-                  gap: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: {
-                    xs: "column",
-                    md: "row",
-                  },
-                }}
-              >
-                <Typography variant="h4" sx={{ flexGrow: 1 }}>
-                  Доставка
-                </Typography>
-                {type === DeliveryType.cdek && cdekPoint && cdekCalculation ? (
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      textAlign: {
-                        xs: "center",
-                        md: "start",
-                      },
-                    }}
-                  >
-                    В пункт «{cdekPoint.name}» на сумму{" "}
-                    <Price sum={cdekCalculation.total_sum} /> (
-                    {cdekCalculation.period_min ===
-                    cdekCalculation.period_max ? (
-                      <>
-                        {cdekCalculation.period_max}{" "}
-                        {decline(cdekCalculation.period_max, [
-                          "день",
-                          "дня",
-                          "дней",
-                        ])}
-                      </>
-                    ) : (
-                      <>
-                        {cdekCalculation.period_min} –{" "}
-                        {cdekCalculation.period_max}{" "}
-                        {decline(cdekCalculation.period_max, [
-                          "день",
-                          "дня",
-                          "дней",
-                        ])}
-                      </>
-                    )}
-                    )
-                  </Typography>
-                ) : null}
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  mb: 2,
-                  flexDirection: {
-                    xs: "column",
-                    md: "row",
-                  },
-                }}
-              >
-                <PhoneInput inputRef={phoneFieldRef} onChange={onPhoneChange} />
-                <Field
-                  component={TextInput}
-                  onChange={onEmailChange}
-                  label="Адрес электронной почты"
-                  autoComplete="off"
-                  name="email"
-                  fullWidth
-                />
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <ToggleButtonGroup value={type} onChange={setType} exclusive>
-                  <ToggleButton value={DeliveryType.cdek}>
-                    Пункт выдачи СДЭК
-                  </ToggleButton>
-                  <ToggleButton value={DeliveryType.courier}>
-                    Курьером по Москве и МО
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                {type === DeliveryType.cdek ? (
-                  <>
-                    <Autocomplete
-                      disablePortal
-                      autoComplete
-                      value={cdekCity}
-                      filterOptions={identity}
-                      onInputChange={onCdekCityTitleInputChange}
-                      onChange={onCdekCitySelected}
-                      options={cdekCitySuggestions}
-                      noOptionsText="Выберите город"
-                      isOptionEqualToValue={isOptionEqualToValue}
-                      renderOption={(props, option) => (
-                        <li {...props} key={option.value}>
-                          {option.label}
-                        </li>
-                      )}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Город" fullWidth />
-                      )}
-                      sx={{ mb: 1 }}
-                    />
-                    {cdekCity ? (
-                      <>
-                        <Box ref={mapsContainerRef} sx={{ height: 400 }}></Box>
-                      </>
-                    ) : null}
-                  </>
-                ) : null}
-                {type === DeliveryType.courier ? (
-                  <Field
-                    onChange={onCourierAddressChange}
-                    component={TextInput}
-                    label="Адрес доставки"
-                    autoComplete="off"
-                    name="courierAddress"
-                    rows={2}
-                    multiline
-                    fullWidth
-                  />
-                ) : null}
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Field
-                  onChange={onCommentChange}
-                  component={TextInput}
-                  label="Комментарий"
-                  autoComplete="off"
-                  name="comment"
-                  rows={4}
-                  multiline
-                  fullWidth
-                />
-              </Box>
-              <ToPaymentButton />
-            </Form>
-          </Formik>
-        ) : null}
-        {cartState === CartState.payment ? (
-          <>
+        </>
+      ) : (
+        <Box
+          sx={{
+            mb: 4,
+            gap: 2,
+            display: "flex",
+            alignItems: "center",
+            flexDirection: {
+              xs: "column",
+              md: "row",
+            },
+          }}
+        >
+          <Typography variant="h4" sx={{ flexGrow: 1 }}>
+            Товары
+          </Typography>
+          <Typography variant="h6">
+            <Number value={count} />{" "}
+            {decline(count, ["товар", "товара", "товаров"])} на сумму{" "}
+            <Price sum={subtotal} />
+          </Typography>
+          {cartState === CartState.delivery ? (
+            <Button variant="outlined" size="medium" onClick={toItems}>
+              Изменить
+            </Button>
+          ) : null}
+        </Box>
+      )}
+      {cartState === CartState.delivery ? (
+        <Formik
+          onSubmit={toPayment}
+          initialValues={formValues}
+          validationSchema={checkoutValidationSchema}
+          enableReinitialize
+          validateOnMount
+        >
+          <Form>
             <Box
               sx={{
                 mb: 4,
@@ -745,36 +605,191 @@ function Cart() {
                   )
                 </Typography>
               ) : null}
-              {type === DeliveryType.courier ? (
-                <Typography
-                  variant="h6"
-                  sx={{
-                    pl: 3,
-                    width: 300,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {courierAddress.trim().length > 0
-                    ? courierAddress.trim()
-                    : "Адрес не указан"}
-                </Typography>
-              ) : null}
+            </Box>
+            <Box
+              sx={{
+                mb: 2,
+              }}
+            >
+              <Field
+                component={TextInput}
+                onChange={onFioChange}
+                label="Как к вам обращаться?"
+                autoComplete="off"
+                name="fio"
+                fullWidth
+              />
             </Box>
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "center",
-                clear: "both",
+                gap: 2,
+                mb: 2,
+                flexDirection: {
+                  xs: "column",
+                  md: "row",
+                },
               }}
             >
-              <Progress />
+              <PhoneInput inputRef={phoneFieldRef} onChange={onPhoneChange} />
+              <Field
+                component={TextInput}
+                onChange={onEmailChange}
+                label="Адрес электронной почты"
+                autoComplete="off"
+                name="email"
+                fullWidth
+              />
             </Box>
-          </>
-        ) : null}
-      </Box>
-    </>
+            <Box sx={{ mb: 2 }}>
+              <ToggleButtonGroup value={type} onChange={setType} exclusive>
+                <ToggleButton value={DeliveryType.cdek}>
+                  Пункт выдачи СДЭК
+                </ToggleButton>
+                <ToggleButton value={DeliveryType.courier}>
+                  Курьером по Москве и МО
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              {type === DeliveryType.cdek ? (
+                <>
+                  <Autocomplete
+                    disablePortal
+                    autoComplete
+                    value={cdekCity}
+                    filterOptions={identity}
+                    onInputChange={onCdekCityTitleInputChange}
+                    onChange={onCdekCitySelected}
+                    options={cdekCitySuggestions}
+                    noOptionsText="Выберите город"
+                    isOptionEqualToValue={isOptionEqualToValue}
+                    renderOption={(props, option) => (
+                      <li {...props} key={option.value}>
+                        {option.label}
+                      </li>
+                    )}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Город" fullWidth />
+                    )}
+                    sx={{ mb: 1 }}
+                  />
+                  {cdekCity ? (
+                    <>
+                      <Box ref={mapsContainerRef} sx={{ height: 400 }}></Box>
+                    </>
+                  ) : null}
+                </>
+              ) : null}
+              {type === DeliveryType.courier ? (
+                <Field
+                  onChange={onCourierAddressChange}
+                  component={TextInput}
+                  label="Адрес доставки"
+                  autoComplete="off"
+                  name="courierAddress"
+                  rows={2}
+                  multiline
+                  fullWidth
+                />
+              ) : null}
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <Field
+                onChange={onCommentChange}
+                component={TextInput}
+                label="Комментарий"
+                autoComplete="off"
+                name="comment"
+                rows={4}
+                multiline
+                fullWidth
+              />
+            </Box>
+            <ToPaymentButton />
+          </Form>
+        </Formik>
+      ) : null}
+      {cartState === CartState.payment ? (
+        <>
+          <Box
+            sx={{
+              mb: 4,
+              gap: 2,
+              display: "flex",
+              alignItems: "center",
+              flexDirection: {
+                xs: "column",
+                md: "row",
+              },
+            }}
+          >
+            <Typography variant="h4" sx={{ flexGrow: 1 }}>
+              Доставка
+            </Typography>
+            {type === DeliveryType.cdek && cdekPoint && cdekCalculation ? (
+              <Typography
+                variant="h6"
+                sx={{
+                  textAlign: {
+                    xs: "center",
+                    md: "start",
+                  },
+                }}
+              >
+                В пункт «{cdekPoint.name}» на сумму{" "}
+                <Price sum={cdekCalculation.total_sum} /> (
+                {cdekCalculation.period_min === cdekCalculation.period_max ? (
+                  <>
+                    {cdekCalculation.period_max}{" "}
+                    {decline(cdekCalculation.period_max, [
+                      "день",
+                      "дня",
+                      "дней",
+                    ])}
+                  </>
+                ) : (
+                  <>
+                    {cdekCalculation.period_min} – {cdekCalculation.period_max}{" "}
+                    {decline(cdekCalculation.period_max, [
+                      "день",
+                      "дня",
+                      "дней",
+                    ])}
+                  </>
+                )}
+                )
+              </Typography>
+            ) : null}
+            {type === DeliveryType.courier ? (
+              <Typography
+                variant="h6"
+                sx={{
+                  pl: 3,
+                  width: 300,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {courierAddress.trim().length > 0
+                  ? courierAddress.trim()
+                  : "Адрес не указан"}
+              </Typography>
+            ) : null}
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              clear: "both",
+            }}
+          >
+            <Progress />
+          </Box>
+        </>
+      ) : null}
+    </Box>
   );
 }
 
