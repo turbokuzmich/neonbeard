@@ -164,7 +164,7 @@ function Cart() {
   );
 
   const onFioChange = useCallback(
-    (fio) => dispatch(delivery.actions.setFio(fio)),
+    (event) => dispatch(delivery.actions.setFio(event.target.value)),
     [dispatch]
   );
 
